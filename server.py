@@ -65,6 +65,10 @@ def inicializar_datos():
         print(f"❌ Error interno al procesar el Excel: {e}")
         return False
 
+# 🚀 CAMBIO CLAVE: Ejecutar la función inmediatamente al cargar el script.
+# Esto garantiza que Gunicorn cargue los datos en memoria en los servidores de Render.
+inicializar_datos()
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -76,6 +80,5 @@ def obtener_actividades():
     return jsonify(datos_calendario)
 
 if __name__ == '__main__':
-    if inicializar_datos():
-        print("🚀 Servidor Flask corriendo en http://localhost:5000")
-        app.run(debug=True, port=5000)
+    print("🚀 Servidor Flask corriendo localmente en http://localhost:5000")
+    app.run(debug=True, port=5000)
