@@ -1,9 +1,10 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, send_file
 import pandas as pd
 from datetime import datetime
 import os
 
-app = app = Flask(__name__, template_folder='templates', static_folder='static')
+# Forzamos a Flask a reconocer explícitamente las carpetas locales de desarrollo
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 datos_calendario = []
 
@@ -24,14 +25,14 @@ def inicializar_datos():
         df = pd.read_excel(archivo_excel, header=1, engine='openpyxl')
         df.columns = df.columns.str.strip()
         
-        # Convertir a datetime de Pandas
+        # Convertir a datetime de Pandas de forma segura
         df['INICIO'] = pd.to_datetime(df['INICIO'], errors='coerce')
         df['TERMINO'] = pd.to_datetime(df['TERMINO'], errors='coerce')
         
         df['ACTIVIDAD'] = df['ACTIVIDAD'].fillna("Sin descripción")
         df['AGENTES'] = df['AGENTES'].fillna("Comunidad")
         
-        # Fecha base para comparar el calendario académico
+        # Fecha base de hoy para calcular vigencias
         fecha_hoy = pd.to_datetime(datetime.now().date())
         
         estados = []
@@ -54,7 +55,7 @@ def inicializar_datos():
                 
         df['Estado'] = estados
         
-        # Convertir las fechas a texto legible antes de enviarlas al Navegador
+        # Formatear las fechas a formato latinoamericano estándar para el Front-End
         df['INICIO'] = df['INICIO'].dt.strftime('%d-%m-%Y').fillna("")
         df['TERMINO'] = df['TERMINO'].dt.strftime('%d-%m-%Y').fillna("")
         
@@ -64,6 +65,9 @@ def inicializar_datos():
     except Exception as e:
         print(f"❌ Error interno al procesar el Excel: {e}")
         return False
+
+# Cargar los datos inmediatamente al arrancar el script
+inicializar_datos()
 
 @app.route('/')
 def home():
@@ -75,7 +79,13 @@ def obtener_actividades():
         return jsonify({"error": "No hay datos disponibles en el servidor"}), 500
     return jsonify(datos_calendario)
 
+# Ruta dedicada para servir el logo de forma infalible en entorno local y en Render
+@app.route('/logoUCT.png')
+def servir_logo():
+    if os.path.exists('logoUCT.png'):
+        return send_file('logoUCT.png')
+    return jsonify({"error": "Logotipo no encontrado en el servidor"}), 404
+
 if __name__ == '__main__':
-    if inicializar_datos():
-        print("🚀 Servidor Flask corriendo en http://localhost:5000")
-        app.run(debug=True, port=5000)
+    print("🚀 Servidor Flask corriendo localmente en http://localhost:5000")
+    app.run(debug=True, port=5000)

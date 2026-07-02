@@ -4,23 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Buscador Calendario Académico UCT</title>
-    <link rel="stylesheet" href="/static/estilos.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <img src="/logoUCT.png" alt="Logo UCT" class="logo-img" onerror="this.style.display='none'">
-        <div>
-            <h1>📅 Calendario Académico Institucional</h1>
-            <p class="subtitle">Buscador Oficial de Eventos y Actividades UCT</p>
+    <header style="text-align: center; border-bottom: 4px solid #002b49; padding-bottom: 20px; margin-bottom: 25px; width: 100%;">
+        
+        <div style="background-color: #002b49; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: inline-block; width: 100%; max-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+            <img src="/logoUCT.png" alt="Logo UCT" style="max-width: 220px; height: auto; margin: 0 auto; display: block;" onerror="this.style.display='none'">
+        </div>
+
+        <div style="display: block; width: 100%;">
+            <h1 style="margin: 0; color: #002b49; font-size: 1.8rem; font-weight: 700;"> Calendario Académico UCT</h1>
+            
         </div>
     </header>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('vigentes')">🔥 Vigentes Hoy</button>
-        <button class="tab-btn" onclick="switchTab('proximos')">⏳ Próximos Eventos</button>
-        <button class="tab-btn" onclick="switchTab('buscar')">🔍 Buscador Dinámico</button>
+        <button class="tab-btn active" onclick="switchTab('vigentes')"> Vigentes Hoy</button>
+        <button class="tab-btn" onclick="switchTab('proximos')"> Próximos Eventos</button>
+        <button class="tab-btn" onclick="switchTab('buscar')"> Buscador Dinámico</button>
     </div>
 
     <div id="vigentes" class="tab-content active">
@@ -29,6 +33,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Cierre Inminente</th>
                         <th>Inicio</th>
                         <th>Término</th>
                         <th>Actividad</th>
@@ -36,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody id="tabla-vigentes">
-                    <tr><td colspan="4">Cargando actividades del día...</td></tr>
+                    <tr><td colspan="5">Cargando actividades del día...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -48,6 +53,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Días para Inicio</th>
                         <th>Inicio</th>
                         <th>Término</th>
                         <th>Actividad</th>
@@ -55,7 +61,7 @@
                     </tr>
                 </thead>
                 <tbody id="tabla-proximos">
-                    <tr><td colspan="4">Cargando próximos eventos...</td></tr>
+                    <tr><td colspan="5">Cargando próximos eventos...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -64,6 +70,18 @@
     <div id="buscar" class="tab-content">
         <h2>Búsqueda Avanzada de Eventos</h2>
         <input type="text" id="input-buscar" class="search-box" placeholder="Escribe aquí (ej: ultimo plazo, suspension, feriado)..." oninput="filtrarActividades()">
+        
+        <div class="filter-checkboxes">
+            <label class="checkbox-container">
+                <input type="checkbox" id="chk-proximo" checked onchange="filtrarActividades()">
+                <span class="checkmark"></span> Mostrar Próximos / Vigentes
+            </label>
+            <label class="checkbox-container">
+                <input type="checkbox" id="chk-pasado" onchange="filtrarActividades()">
+                <span class="checkmark"></span> Mostrar Pasados
+            </label>
+        </div>
+
         <div class="table-responsive">
             <table>
                 <thead>
@@ -76,13 +94,13 @@
                     </tr>
                 </thead>
                 <tbody id="tabla-busqueda">
-                    <tr><td colspan="5">Ingresa al menos 2 letras para iniciar la consulta inteligente...</td></tr>
+                    <tr><td colspan="5" style="padding: 15px;">Ingresa al menos 2 letras para iniciar la consulta inteligente...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<script src="/static/script.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
